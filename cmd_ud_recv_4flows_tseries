@@ -1,0 +1,9 @@
+WAIT=3-0
+BIN=1
+TAG_DATE=4Hr_fifo_19May20
+
+./rdmamon_ud_recv -I 62.40.123.242 -a0x40:0x1   -Q 512 -T 10 -H -B ${BIN} -u 5001 > remus-DTNlon_ud_4flows_tseries_w${WAIT}_p700k_Q512_5001_${TAG_DATE}.txt &
+./rdmamon_ud_recv -I 62.40.123.242 -a0x80:0x1   -Q 512 -T 10 -H -B ${BIN} -u 5002 > remus-DTNlon_ud_4flows_tseries_w${WAIT}_p700k_Q512_5002_${TAG_DATE}.txt &
+./rdmamon_ud_recv -I 62.40.123.242 -a0x100:0x1  -Q 512 -T 10 -H -B ${BIN} -u 5003 > remus-DTNlon_ud_4flows_tseries_w${WAIT}_p700k_Q512_5003_${TAG_DATE}.txt &
+./rdmamon_ud_recv -I 62.40.123.242 -a0x200:0x1  -Q 512 -T 10 -H -B ${BIN} -u 5004 > remus-DTNlon_ud_4flows_tseries_w${WAIT}_p700k_Q512_5004_${TAG_DATE}.txt &
+

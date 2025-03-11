@@ -1,0 +1,7 @@
+WAIT=230
+TIME_RUN=28800
+
+./rdmamon_uc_send -w ${WAIT} -x -a 0x400  -d 62.40.123.242 -p 700000 -I 62.40.120.27 -t ${TIME_RUN} -u 5001 &
+./rdmamon_uc_send -w ${WAIT} -x -a 0x800  -d 62.40.123.242 -p 700000 -I 62.40.120.27 -t ${TIME_RUN} -u 5002 &
+./rdmamon_uc_send -w ${WAIT} -x -a 0x1000 -d 62.40.123.242 -p 700000 -I 62.40.120.27 -t ${TIME_RUN} -u 5003 &
+./rdmamon_uc_send -w ${WAIT} -x -a 0x2000 -d 62.40.123.242 -p 700000 -I 62.40.120.27 -t ${TIME_RUN} -u 5004 &

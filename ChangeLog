@@ -1,0 +1,61 @@
+rdmamon HISTORY
+
+
+	Version 1.3.2
+	rich  18 May 2020
+			Use the libhj  *Stat(s) and Statistics.* functions from Stats
+			Use libhj for TransientBuf
+			Remove #include  "RDMA_Stats.h" "Statistics.h"
+
+	Version 1.3.0 1.3.1
+	rich  31 Jan 2020 to May 2020
+			Add  rdmamon_ud_send rdmamon_ud_recv rdmamon_uc_send rdmamon_uc_recv
+			Change name of configure.in to configure.ac
+			Add perl scripts cmd_* for _rc _uc _ud
+			Add TransientBuf, Statistics, RDMA_Stats
+	
+ 	Version 1.2.0
+	rich  05 Jan 20
+			Add rdmamon_uc_mon rdmamon_uc_resp
+
+	Version 1.1.1
+	rich  27 Aug 19
+			Add TCP link for UD info (??, QPnum, Gid exchange} to rdmamon_rc_mon rdmamon_ud_resp
+
+	Version 1.1.0
+        rich  Aug 19
+			Add NIC stats to rdmamon_rc_mon
+			Start testing rdmamon_ud_mon rdmamon_ud_resp  - need AddressHandle
+
+	Version 1.0.5
+	rich 04-06 Sep 17
+			Add connection tidy up rdma_disconnect() rdma_destroy_qp()rdma_destroy_id() to
+				rdma_rc_resp when get CMD_TESTEND
+			In rdma_rc_mon move send_cmd(CMD_TESTEND ) to after completion of wait_time scan
+			Correct reception of CMD_GETCPULOAD and CMD_GETNETSNMP
+
+	Version 1.0.4
+	rich 04 Sep 17
+			Reliable Connection post & recv, only ask for post completion every num_workreq sends
+			Use conn_id[0] for commands [1] for data
+			Implement separate send_ring_ctx and recv_ring_ctx buffers - to prevent overwriting
+			Add -Q to specify num_workreq
+			Correct printout columns
+
+	Version 1.0.3
+			Test Unreliable Connection
+
+	Version 1.0.2
+	rich 31 Aug 17
+			Reliable Connection simple post & recv, waiting for completion
+			Fix porting bugs like -G data transfer
+
+	Version 1.0.1
+			First tests
+
+	Version 1.0.0
+        rich  17 Aug 17
+			Inital version
+
+
+

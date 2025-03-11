@@ -1,0 +1,4 @@
+#!/bin/bash
+#Best practice method for:
+#aclocal && autoconf && automake --foreign --add-missing 
+autoreconf -i

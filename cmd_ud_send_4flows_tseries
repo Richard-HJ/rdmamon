@@ -1,0 +1,12 @@
+WAIT=3.0
+#2 Hr
+TIME_RUN=7200
+#8 Hr
+#TIME_RUN=28800
+#10 Hr
+#TIME_RUN=36000
+
+./rdmamon_ud_send -w ${WAIT} -x -a 0x400  -d 62.40.123.242 -p 8932 -I 62.40.120.27 -t ${TIME_RUN} -u 5001 &
+./rdmamon_ud_send -w ${WAIT} -x -a 0x800  -d 62.40.123.242 -p 8932 -I 62.40.120.27 -t ${TIME_RUN} -u 5002 &
+./rdmamon_ud_send -w ${WAIT} -x -a 0x1000 -d 62.40.123.242 -p 8932 -I 62.40.120.27 -t ${TIME_RUN} -u 5003 &
+./rdmamon_ud_send -w ${WAIT} -x -a 0x2000 -d 62.40.123.242 -p 8932 -I 62.40.120.27 -t ${TIME_RUN} -u 5004 &

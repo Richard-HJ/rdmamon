@@ -1,0 +1,8 @@
+WAIT=230
+BIN=3
+
+./rdmamon_uc_recv -I 62.40.123.242 -a0x40  -Q 512 -H -B ${BIN} -u 5001 > remus-DTNlon_uc_4flows_w${WAIT}_p700k_Q512_5001_23Mar20.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x80  -Q 512 -H -B ${BIN} -u 5002 > remus-DTNlon_uc_4flows_w${WAIT}_p700k_Q512_5002_23Mar20.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x100 -Q 512 -H -B ${BIN} -u 5003 > remus-DTNlon_uc_4flows_w${WAIT}_p700k_Q512_5003_23Mar20.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x200 -Q 512 -H -B ${BIN} -u 5004 > remus-DTNlon_uc_4flows_w${WAIT}_p700k_Q512_5004_23Mar20.txt &
+

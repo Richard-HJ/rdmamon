@@ -1,0 +1,20 @@
+# To make the rdmamon programs in your home directory:
+
+#autoreconf -i Copy missing auxiliary files -f consider all files obsolete
+autoreconf -if
+./configure --prefix=$HOME --with-hj-location=$HOME
+make clean
+make install
+
+# $HOME/bin is created with the rdmamon programs
+
+# To make and install the rdmamon programs for all users in the system directories
+# Make and install libhj in the system directories, then:
+
+#autoreconf -i Copy missing auxiliary files -f consider all files obsolete
+#autoreconf -if
+#./configure 
+#make clean
+#make install
+
+# Please see the file INSTALL for more details.

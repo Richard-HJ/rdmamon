@@ -1,0 +1,14 @@
+WAIT=460
+BIN=3
+DATE_RUN=7f_14Apr20
+QSIZE=128
+
+./rdmamon_uc_recv -I 62.40.123.242 -a0x40  -Q ${QSIZE} -T 10 ${BIN} -u 5001 > remus-DTNlon_uc_tseries_8hr_w${WAIT}_p700k_Q${QSIZE}_5001_${DATE_RUN}.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x80  -Q ${QSIZE} -T 10 ${BIN} -u 5002 > remus-DTNlon_uc_tseries_8hr_w${WAIT}_p700k_Q${QSIZE}_5002_${DATE_RUN}.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x100 -Q ${QSIZE} -T 10 ${BIN} -u 5003 > remus-DTNlon_uc_tseries_8hr_w${WAIT}_p700k_Q${QSIZE}_5003_${DATE_RUN}.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x200 -Q ${QSIZE} -T 10 ${BIN} -u 5004 > remus-DTNlon_uc_tseries_8hr_w${WAIT}_p700k_Q${QSIZE}_5004_${DATE_RUN}.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x001 -Q ${QSIZE} -T 10 ${BIN} -u 5005 > remus-DTNlon_uc_tseries_8hr_w${WAIT}_p700k_Q${QSIZE}_5005_${DATE_RUN}.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x002 -Q ${QSIZE} -T 10 ${BIN} -u 5006 > remus-DTNlon_uc_tseries_8hr_w${WAIT}_p700k_Q${QSIZE}_5006_${DATE_RUN}.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x004 -Q ${QSIZE} -T 10 ${BIN} -u 5007 > remus-DTNlon_uc_tseries_8hr_w${WAIT}_p700k_Q${QSIZE}_5007_${DATE_RUN}.txt &
+#./rdmamon_uc_recv -I 62.40.123.242 -a0x008 -Q ${QSIZE} -T 10 ${BIN} -u 5008 > remus-DTNlon_uc_tseries_8hr_w${WAIT}_p700k_Q${QSIZE}_5008_${DATE_RUN}.txt &
+

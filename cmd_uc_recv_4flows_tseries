@@ -1,0 +1,9 @@
+WAIT=230
+BIN=3
+TAG_DATE=p700k_Q512_5001_24Mar20
+
+./rdmamon_uc_recv -I 62.40.123.242 -a0x40  -Q 512 -T 10 -H -B ${BIN} -u 5001 > remus-DTNlon_uc_tseries_4flows_w${WAIT}_${TAG_DATE}.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x80  -Q 512 -T 10 -H -B ${BIN} -u 5002 > remus-DTNlon_uc_tseries_4flows_w${WAIT}_${TAG_DATE}.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x100 -Q 512 -T 10 -H -B ${BIN} -u 5003 > remus-DTNlon_uc_tseries_4flows_w${WAIT}_${TAG_DATE}.txt &
+./rdmamon_uc_recv -I 62.40.123.242 -a0x200 -Q 512 -T 10 -H -B ${BIN} -u 5004 > remus-DTNlon_uc_tseries_4flows_w${WAIT}_${TAG_DATE}.txt &
+

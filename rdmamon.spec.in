@@ -1,0 +1,45 @@
+Summary:	Program to measure RDMA performance
+Name:		@PACKAGE@
+Version:	@VERSION@
+Release:	1%{?dist}
+License:	distributable
+Group:		Applications/Internet
+Vendor:		Richard Hughes-Jones <R.Hughes-Jones@man.ac.uk>
+URL:		http://www.hep.man.ac.uk/~rich/net/
+Source0:	http://www.hep.man.ac.uk/u/rich/net/tools/%{name}-%{version}.tar.gz
+BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildRequires:	libhj, pthreads, autoconf, automake
+
+%description
+rdmamon
+
+%prep
+%setup -q
+
+%build
+autoreconf -i
+%configure --prefix=%{_prefix}
+%{__make} clean
+%{__make} all
+
+
+%install
+%{__rm} -rf "%{buildroot}"
+%{__make} install DESTDIR="%{buildroot}"
+
+%clean
+%{__rm} -rf "%{buildroot}"
+
+%files
+%defattr(-,root,root,-)
+%{_bindir}/rdmamon_rc_mon
+%{_bindir}/rdmamon_rc_resp
+%{_bindir}/rdmamon_uc_mon
+%{_bindir}/rdmamon_uc_resp
+%{_bindir}/rdmamon_ud_mon
+%{_bindir}/rdmamon_ud_resp
+
+%changelog
+
+* 17 Aug 2017 Richard Hughes-Jones <Richard.Hughes-Jones@geant.org> 
+- Initial build.

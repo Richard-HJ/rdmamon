@@ -1,13 +1,13 @@
 /*
      version.h     R. Hughes-Jones  The University of Manchester
 
-     Common include file for eth_ udp_ and tcp_ network test programs
+     Common include file for eth_ udp_ tcp_ rdma_ network test programs
 
 */
 
 #ifdef  INSTANTIATE
-char *UDPMON_VERSION={" UDPmon Version @VERSION@ "};
+char *RDMAMON_VERSION={" RDMAmon Version @VERSION@ "};
 
 #else
-extern char *UDPMON_VERSION;
+extern char *RDMAMON_VERSION;
 #endif

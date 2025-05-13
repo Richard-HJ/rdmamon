@@ -381,6 +381,7 @@ int main (int argc, char **argv)
 
 /* for address tuple exchange */
     char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
+	char msg_out[256];
     char *ptr;
     int msg_len_read;
     int nread;
@@ -550,14 +551,7 @@ tbuf = Transient_Init(  data_size,  ring_len,  num_after);
 	
     tcp_soc = listenTCP_link();
  
-/* address tuple exchange */ 
-    // format src (ie local) gid for the union - send as chars
-    gid_to_wire_gid(&src_addr.gid, local_gid);
-    if(!quiet){
-		printf("  local address:   LID 0x%04x, QPN 0x%06x, PSN 0x%06x: GID %s\n",
-               src_addr.lid, src_addr.qpn, src_addr.psn, local_gid);
-	}
-	
+/* address tuple exchange */ 	
     /* receive remote address tuple */ 
     ptr = (char*) &msg;
     nbytes = sizeof( msg);
@@ -581,6 +575,10 @@ tbuf = Transient_Init(  data_size,  ring_len,  num_after);
 		ptr+= nread;
 		msg_len_read += nread;
     } /* end of tcp-read while() */
+	if(verbose) { 
+		printf("recv %d bytes; expected sizeof msg %ld\n", msg_len_read, sizeof (msg) );
+        printf("recv message %s\n", msg);
+	}
 
     sscanf(msg, "%x:%x:%x:%s", &dst_addr.lid, &dst_addr.qpn, &dst_addr.psn, remote_gid);
     if(!quiet){
@@ -590,15 +588,25 @@ tbuf = Transient_Init(  data_size,  ring_len,  num_after);
      /* convert address from text to binary */
     wire_gid_to_gid(remote_gid, &dst_addr.gid );
 
+    // format src (ie local) gid for the union - send as chars
+    gid_to_wire_gid(&src_addr.gid, local_gid);
+    if(!quiet){
+		printf("  local address:   LID 0x%04x, QPN 0x%06x, PSN 0x%06x: GID %s\n",
+               src_addr.lid, src_addr.qpn, src_addr.psn, local_gid);
+	}
     /* send local address tuple */
-    sprintf(msg, "%04x:%06x:%06x:%s", src_addr.lid, src_addr.qpn, src_addr.psn, local_gid);
+    sprintf(msg_out, "%04x:%06x:%06x:%s", src_addr.lid, src_addr.qpn, src_addr.psn, local_gid);
     nbytes = sizeof(msg);
-    nsent = sendto(tcp_soc, msg, nbytes, flags, NULL, 0);
+    nsent = sendto(tcp_soc, msg_out, nbytes, flags, NULL, 0);
     if(nsent != nbytes){
 	    perror("Error on sendto; exiting program");
 		close(tcp_soc);
 	    exit(EXIT_FAILURE);
-    }
+	if(verbose) { 	
+		printf("send %d bytes; expected sizeof msg %ld\n", nsent, sizeof (msg) );    /* send address tuple */
+        printf("send message %s\n", msg);
+	}
+
 	close(tcp_soc);
 
     if(!quiet) {

@@ -367,6 +367,7 @@ int main (int argc, char **argv)
 
  /* for address tuple exchange */
     char msg[sizeof "0000:000000:000000:00000000000000000000000000000000"];
+	char msg_out[256];
     int nbytes;
     int nsent;
     unsigned int flags = 0;          	        /* flags for sendto() recvfrom() select() */
@@ -486,7 +487,9 @@ int main (int argc, char **argv)
     sock_create_udp_socket(&soc, &soc_info, AF_INET);
 
 /* initalise NIC Stats */
-    nic_stats_Init( &nic_stats, soc, interface_name);
+    // allow for non-physical names of interface
+    if(local_if_name != NULL) nic_stats_Init( &nic_stats, soc, local_if_name);
+    else nic_stats_Init( &nic_stats, soc, interface_name);
 
 /* open RDMA device and create resources */
     rdma_setup(&src_addr);
@@ -508,19 +511,24 @@ int main (int argc, char **argv)
 		printf("  local address:   LID 0x%04x, QPN 0x%06x, PSN 0x%06x, GID %s\n",
                src_addr.lid, src_addr.qpn, src_addr.psn, local_gid);
 	}
-    sprintf(msg, "%04x:%06x:%06x:%s", src_addr.lid, src_addr.qpn, src_addr.psn, local_gid);
+    sprintf(msg_out, "%04x:%06x:%06x:%s", src_addr.lid, src_addr.qpn, src_addr.psn, local_gid);
     nbytes = sizeof(msg);
-    nsent = sendto(tcp_soc, msg, nbytes, flags, NULL, 0);
+    nsent = sendto(tcp_soc, msg_out, nbytes, flags, NULL, 0);
     if(nsent != nbytes){
 	    perror("Error on sendto; exiting program");
 		close(tcp_soc);
 	    exit(EXIT_FAILURE);
     }
-	
+//RHJ
+	if(verbose) { 	
+		printf("send %d bytes; expected sizeof msg %ld\n", nsent, sizeof (msg) );    /* send address tuple */
+        printf("send message %s\n", msg_out);
+	}
+
     /* receive remote address tuple */
-    ptr = (char*) &msg;
     nbytes = sizeof( msg);
     msg_len_read =0;
+    ptr = (char*) &msg;
     while(nbytes>0){
 		nread = recvfrom(tcp_soc, ptr, nbytes, flags,  NULL, NULL );
 		/* check for error or link closed ( nread =0) */
@@ -541,8 +549,8 @@ int main (int argc, char **argv)
 		msg_len_read += nread;
     } /* end of tcp-read while() */
 	if(verbose) { 
-		printf("read %d bytes; sizeof msg %ld\n", nread, sizeof (msg) );
-        printf("read message %s\n", msg);
+		printf("recv %d bytes; expected sizeof msg %ld\n", msg_len_read, sizeof (msg) );
+        printf("recv message %s\n", msg);
 	}
 	
     sscanf(msg, "%x:%x:%x:%s", &dst_addr.lid, &dst_addr.qpn, &dst_addr.psn, remote_gid);

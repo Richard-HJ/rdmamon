@@ -57,6 +57,86 @@ void print_gid(const union ibv_gid *gid)
     printf( "%d: %08x\n",i, htonl(*(uint32_t *)(gid->raw + i * 4)) );
 }
 
+void print_ibv_context(struct ibv_context *context )
+  /* --------------------------------------------------------------------- */
+{
+	/*
+	struct ibv_context {
+        struct ibv_device      *device;
+        struct ibv_context_ops  ops;
+        int                     cmd_fd;
+        int                     async_fd;
+        int                     num_comp_vectors;
+        pthread_mutex_t         mutex;
+        void                   *abi_compat;
+	};
+	*/
+	
+ 	printf("ibv_context\n");
+    printf( " ibv_context -- Device name      : %s\n", ibv_get_device_name(context->device) );
+    printf( " ibv_context -- cmd_fd           : %d\n", context->cmd_fd );
+    printf( " ibv_context -- async_fd         : %d\n", context->async_fd );
+    printf( " ibv_context -- num_comp_vectors : %d\n", context->num_comp_vectors );
+	printf("ibv_context ----\n");
+	
+}
+
+	
+void print_comp_channel(struct ibv_comp_channel *comp_channel )
+  /* --------------------------------------------------------------------- */
+{
+	/*
+	struct ibv_comp_channel {
+	struct ibv_context     *context;
+	int			fd;
+	int			refcnt;
+	};
+	*/
+	printf("comp_channel\n");
+    printf( " fd     : %d\n", comp_channel->fd);
+    printf( " refcnt : %d\n", comp_channel->refcnt);
+	
+	print_ibv_context(comp_channel->context );
+	printf("comp_channel ----\n");
+	
+}
+
+void print_ibv_device(struct ibv_device *ibv_device )
+  /* --------------------------------------------------------------------- */
+{
+	/*
+	enum ibv_node_type {
+        IBV_NODE_UNKNOWN        = -1,
+        IBV_NODE_CA             = 1,
+        IBV_NODE_SWITCH,
+        IBV_NODE_ROUTER,
+        IBV_NODE_RNIC,
+        IBV_NODE_USNIC,
+        IBV_NODE_USNIC_UDP,
+        IBV_NODE_UNSPECIFIED,
+};
+
+	enum ibv_transport_type {
+        IBV_TRANSPORT_UNKNOWN   = -1,
+        IBV_TRANSPORT_IB        = 0,
+        IBV_TRANSPORT_IWARP,
+        IBV_TRANSPORT_USNIC,
+        IBV_TRANSPORT_USNIC_UDP,
+        IBV_TRANSPORT_UNSPECIFIED,
+};
+
+*/
+	printf("Print ibv_device\n");
+	printf( " ibv_device -- IB device name      : %s\n", ibv_device->name);
+	printf( " ibv_device -- verbs device name   : %s\n", ibv_device->dev_name);
+	printf( " ibv_device -- node type           : %d\n", ibv_device->node_type);
+	printf( " ibv_device -- transport type      : %d\n", ibv_device->transport_type);
+	printf( " ibv_device -- verbs dev_path      : %s\n", ibv_device->dev_path);
+	printf( " ibv_device -- class dev_path      : %s\n", ibv_device->ibdev_path);
+	printf("Print ibv_device ----\n");
+
+}
+
 void print_ah(struct ibv_ah *ah)
   /* --------------------------------------------------------------------- */
 {
@@ -128,11 +208,13 @@ void rdma_setup(struct endpoint_tuple *local_addr)
     for (i = 0; dev_list[i]; ++i){
       if (!strcmp(ibv_get_device_name(dev_list[i]), rdma_devname)) break;
     }
+	if(verbose) printf("dev_list[i] i=%d device name %s\n", i, ibv_get_device_name(dev_list[i]) ); 
     rdma_dev = dev_list[i];
     if (!rdma_dev) {
       fprintf(stderr, "IB device %s not found\n", rdma_devname);
       exit(EXIT_FAILURE);
     }
+	if(verbose) print_ibv_device(rdma_dev );
     /* open RDMA device */
     if(verbose) printf(" ibv_open_device %s\n",  ibv_get_device_name(rdma_dev));
     rdma_context = ibv_open_device(rdma_dev);
@@ -141,6 +223,8 @@ void rdma_setup(struct endpoint_tuple *local_addr)
 	      ibv_get_device_name(rdma_dev));
       exit(EXIT_FAILURE);
     }
+	if(verbose) printf("The device '%s' was opened\n", ibv_get_device_name(rdma_context->device));
+	if(verbose) print_ibv_context(rdma_context );
 
 /* Create a completion channel to use with the SRQ CQ
        to receive notifications when new completion queue event (CQE)
@@ -152,7 +236,16 @@ void rdma_setup(struct endpoint_tuple *local_addr)
       exit(EXIT_FAILURE);
     }
 
+if(verbose) printf("ibv_create_cq max_workreq %d srq_cq_channel %p\n", max_workreq, srq_cq_channel);
+if(verbose) print_comp_channel(srq_cq_channel);
+
 /* Create a Completion Queue to use for all connections (QPs) that use the SRQ */
+/*
+       struct ibv_cq *ibv_create_cq(struct ibv_context *context, int cqe,
+                                    void *cq_context,
+                                    struct ibv_comp_channel *channel,
+                                    int comp_vector);
+*/
     srq_cq = ibv_create_cq(rdma_context, max_workreq, NULL, srq_cq_channel, 0);
     if (!srq_cq) {
       VERB_ERR("ibv_create_cq", -1);
@@ -519,13 +612,13 @@ int find_roce_info(char *local_ip_address, char *rdma_device, int *rdma_index, i
 		    strcat(name_dir_gids, "/");
 		    strcat(name_dir_gids, ib_device_port->d_name);
 		    strcat(name_dir_gids, DIR_GIDS);
-		    if(verbose) printf("Filename for gid %s\n", name_dir_gids);
-		
+		    if(verbose) printf("Filename for gid directory %s\n", name_dir_gids);		
 		    dir_device_ports_gids = opendir(name_dir_gids);
 		    if (dir_device_ports_gids == NULL){
 		      printf("Could not open directory %s", name_dir_gids );
 		      return 0;
 		    }
+			
 		    // read the directory with gid entries  -- the gid filename is know as the index
 		    while ((ib_device_port_gid = readdir(dir_device_ports_gids)) != NULL){
 		        if(ib_device_port_gid->d_type == DT_REG){
@@ -533,7 +626,7 @@ int find_roce_info(char *local_ip_address, char *rdma_device, int *rdma_index, i
 			    strcpy(name_file_gid, name_dir_gids );
 			    strcat(name_file_gid, "/");
 			    strcat(name_file_gid, ib_device_port_gid->d_name);
-			    
+				if(verbose) printf("Filename gid file %s\n", name_file_gid);			    
 			    if((gid_file = open(name_file_gid, O_RDONLY) ) == -1) {
 			      perror("open of gid file failed :");
 			      exit(-1);
@@ -541,6 +634,8 @@ int find_roce_info(char *local_ip_address, char *rdma_device, int *rdma_index, i
 			    read(gid_file, gid, 39);
 			    gid[40]=0;
 			    close(gid_file);
+				if(verbose) printf("gid:%s gid_want:%s \n", gid, gid_want);			    
+				
 				str_ptr = strstr(gid, gid_want);
 				if(str_ptr != NULL){
 					// look up the RoCE version
@@ -558,7 +653,9 @@ int find_roce_info(char *local_ip_address, char *rdma_device, int *rdma_index, i
 					read(ver_file, ver, 39);
 					ver[40]=0;
 					close(ver_file);
-					str_ptr = strstr(ver, ver_want);
+					if(verbose) printf("RoCE version:%s version wanted:%s\n", ver, ver_want);
+					
+					str_ptr = strstr(ver, ver_want); 
 					if(str_ptr != NULL){
 						if(verbose){
 						printf("device name %s\n", ib_device->d_name);
@@ -603,8 +700,18 @@ int find_roce_info(char *local_ip_address, char *rdma_device, int *rdma_index, i
 	    } // end loop over ports
 	    closedir(dir_device_ports);
 	}
+		if(verbose) printf("============ End of Device %s\n\n", ib_device->d_name);
     } // end loop over devices
     closedir(dir_device);  
+	
+	if(verbose){
+		printf("rdma_device:%s\n", rdma_device);
+		printf("rdma_index:%d \n", *rdma_index );
+		printf("ib_port:%d \n", *ib_port);
+		printf("nic_name:%s\n", nic_name);
+		printf("============ End of find_roce_info()\n");
+	}
+	
     return 0; 
 } 
 

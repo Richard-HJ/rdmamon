@@ -1,5 +1,13 @@
 rdmamon HISTORY
 
+	Version branch more_debug 
+			Add nore if(verbose) printout to rdmamon_ud_recv.c rdmamon_ud_send.c
+			Use msg_out[256] to construct address tuple exchange, but only send sizeof( msg)
+			Update and add more debug printout in rdmamon_ud_common.h
+
+	Version 1.3.2
+	rich  10 Mar 2025
+			Add rdmamon to github
 
 	Version 1.3.2
 	rich  18 May 2020

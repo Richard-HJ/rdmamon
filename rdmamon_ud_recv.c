@@ -602,6 +602,7 @@ tbuf = Transient_Init(  data_size,  ring_len,  num_after);
 	    perror("Error on sendto; exiting program");
 		close(tcp_soc);
 	    exit(EXIT_FAILURE);
+	}
 	if(verbose) { 	
 		printf("send %d bytes; expected sizeof msg %ld\n", nsent, sizeof (msg) );    /* send address tuple */
         printf("send message %s\n", msg);

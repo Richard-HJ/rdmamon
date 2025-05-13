@@ -144,6 +144,7 @@ struct endpoint_tuple {
     float run_rate =0.0;                        /* user data rate in Mbit/s */
     int rate_set = 0;                           /* flag =1 if a data rate is given - calc  wait_time_int */
     char *local_ip_address=NULL;                /* IP address of the local interface to use e.g. a.b.c.d */
+    char *local_if_name=NULL;                   /* name of the local interface to use */
 
 /* control */
     int loop_max = 0;                           /* loop control - number of times to loop over the sending loop - allows run to time */
@@ -488,8 +489,14 @@ int main (int argc, char **argv)
 
 /* initalise NIC Stats */
     // allow for non-physical names of interface
-    if(local_if_name != NULL) nic_stats_Init( &nic_stats, soc, local_if_name);
-    else nic_stats_Init( &nic_stats, soc, interface_name);
+    if(local_if_name != NULL){
+      printf("local_if_name %s\n",local_if_name);
+      nic_stats_Init( &nic_stats, soc, local_if_name);
+    }
+    else {
+      printf("interface_name %s\n",interface_name);
+      nic_stats_Init( &nic_stats, soc, interface_name);
+    }
 
 /* open RDMA device and create resources */
     rdma_setup(&src_addr);
@@ -746,6 +753,7 @@ static void parse_command_line (int argc, char **argv)
 "Usage: udpmon_bw_mon -option<parameter> [...]\n\
 options:\n\
 	 -I = <IP address of local interface to use for RDMA & NIC information e.g. a.b.c.d  [NULL]>\n\
+	 -J = <name of local interface to use for RDMA & NIC information [NULL]>\n\
 	 -Q = <number of Work Requests on a Queue>\n\
      -V = print version number\n\
 	 -a = <cpu_mask set bitwise cpu_no 3 2 1 0 in hex>\n\
@@ -754,24 +762,24 @@ options:\n\
 	 -g = <gap time to wait between bursts in us>\n\
 	 -h = print this message\n\
 	 -i = <increment for wait time in us>\n\
-         -l = <no. of frames to send>\n\
-         -n = <no. of bursts to send in Burst Mode>\n\
+	 -l = <no. of frames to send>\n\
+	 -n = <no. of bursts to send in Burst Mode>\n\
 	 -p = <length in bytes of mock data packet>\n\
-         -r = send data rate Mbit/s\n\
-         -t = <no. of seconds to run the test - calculates no. of frames to send >\n\
+	 -r = send data rate Mbit/s\n\
+	 -t = <no. of seconds to run the test - calculates no. of frames to send >\n\
 	 -q = quiet - only print results\n\
-         -v = turn on debug printout\n\
+	 -v = turn on debug printout\n\
 	 -u = <destination tcp port no - default 5001 decimal>\n\
-         -w = <wait time tt.t in us>\n\
-         -x = print more info (CPUStats) "};
+	 -w = <wait time tt.t in us>\n\
+	 -x = print more info (CPUStats) "};
 
 
     error=0;
     
 #ifdef IPv6
-    while ((c = getopt(argc, argv, "a:d:e:g:i:l:n:p:r:t:u:w:I:Q:hqvx6V")) != (char) EOF) {
+    while ((c = getopt(argc, argv, "a:d:e:g:i:l:n:p:r:t:u:w:I:J:Q:hqvx6V")) != (char) EOF) {
 #else
-      while ((c = getopt(argc, argv, "a:d:e:g:i:l:n:p:r:t:u:w:I:Q:hqvxV")) != (char) EOF) {
+      while ((c = getopt(argc, argv, "a:d:e:g:i:l:n:p:r:t:u:w:I:J:Q:hqvxV")) != (char) EOF) {
 #endif	
 	switch(c) {
 
@@ -891,6 +899,14 @@ options:\n\
         case 'I':
                 if (optarg != NULL) {
                     local_ip_address = optarg;
+                } else {
+                    error = 1;
+                }
+                break;
+
+        case 'J':
+                if (optarg != NULL) {
+                    local_if_name = optarg;
                 } else {
                     error = 1;
                 }
